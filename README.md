@@ -11,3 +11,16 @@ Since the eCommerce platform data does not include an explicit "default" label, 
 
 ## 3. Trade-offs Between Interpretable and Complex Models
 In a regulated financial environment, there is a critical trade-off between using simple, interpretable models (e.g., Logistic Regression with Weight of Evidence [WoE]) and complex, high-performance models (e.g., Gradient Boosting Machines [GBMs]). Interpretable models are favored for regulatory transparency, auditability, and stability, allowing stakeholders to understand feature impacts and decisions. They also align well with Basel II requirements. However, these models may underperform on non-linear or high-dimensional data. On the other hand, complex models may yield better predictive accuracy but pose challenges in terms of explainability, bias detection, and regulatory approval. The optimal approach often involves balancing predictive power with regulatory interpretability, possibly using complex models for internal use and interpretable scorecards for regulatory reporting.
+
+## Understanding datasets
+
+| Feature Name           | Description                                          |
+| ---------------------- | ---------------------------------------------------- |
+| `total_amount`         | Sum of `Amount` per customer                         |
+| `avg_amount`           | Mean of `Amount` per customer                        |
+| `count_transactions`   | Number of transactions per customer (`Amount` count) |
+| `std_amount`           | Standard deviation of `Amount`                       |
+| `total_value`          | Sum of `Value` per customer                          |
+| `unique_product_count` | Unique number of products per customer               |
+| `unique_channel_count` | Unique number of channels used per customer          |
+| `fraud_ratio`          | % of transactions that were fraud per customer       |
