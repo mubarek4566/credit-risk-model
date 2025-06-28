@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import missingno as msno
 
-class FeatureVisualizer:
+class Processing:
     def __init__(self, df):
         self.df = df
         self.numeric_cols = ['Amount','Value','PricingStrategy','FraudResult']
