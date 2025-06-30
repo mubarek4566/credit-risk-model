@@ -104,3 +104,45 @@ class CreditScoring:
 
         plt.tight_layout()
         plt.show()
+
+    def assign_high_risk_label(self, rfm_features):
+        """
+        Identifies the high-risk cluster and creates binary is_high_risk column.
+        """
+        # 1. Identify the high-risk cluster (least engaged)
+        cluster_stats = rfm_features.groupby('Cluster').agg({
+            'Recency': 'mean',
+            'Frequency': 'mean', 
+            'Monetary': 'mean'
+        }).reset_index()
+        
+        # High-risk cluster has:
+        # - Highest Recency (least recently active)
+        # - Lowest Frequency
+        # - Lowest Monetary value
+        cluster_stats['risk_score'] = (
+            cluster_stats['Recency'].rank(ascending=False) +  # Higher recency = worse
+            cluster_stats['Frequency'].rank(ascending=True) +  # Lower frequency = worse
+            cluster_stats['Monetary'].rank(ascending=True)     # Lower monetary = worse
+        )
+        
+        high_risk_cluster = cluster_stats.loc[
+            cluster_stats['risk_score'].idxmax(), 'Cluster'
+        ]
+        
+        print(f"Identified Cluster {high_risk_cluster} as high-risk:")
+        print(cluster_stats)
+        
+        # 2. Create binary target column
+        self.df['is_high_risk'] = (
+            self.df['Cluster'] == high_risk_cluster
+        ).astype(int)
+        
+        # 3. Analyze the assignment
+        print("\nHigh-risk customers:", self.df['is_high_risk'].sum())
+        print("Risk distribution:")
+        print(self.df['is_high_risk'].value_counts())
+        
+        return self.df
+
+   
