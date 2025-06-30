@@ -49,14 +49,86 @@ class RiskPrediction:
     def train_logistic_regression(self):
         self.log_reg = LogisticRegression(random_state=42, max_iter=1000)
         self.log_reg.fit(self.X_train, self.y_train)
+        # Logistic Regression Predictions
+        self.log_reg_preds = self.log_reg.predict(self.X_test)
         return self.log_reg
     
     def train_random_forest(self):
         self.rf = RandomForestClassifier(random_state=42)
         self.rf.fit(self.X_train, self.y_train)
+        # Random Forest Predictions
+        self.rf_preds = self.rf.predict(self.X_test)
         return self.rf
     
     def train_XGBoost(self):
         self.XGB = GradientBoostingClassifier(random_state=42)
         self.XGB.fit(self.X_train, self.y_train)
+        # XGB Boosting  Predictions
+        self.XGB_preds = self.XGB.predict(self.X_test)
         return self.XGB
+
+    def LR_models_evaluate(self):
+        # Logistic Regression Evaluation
+        print("Logistic Regression:")
+        print("Accuracy:", accuracy_score(self.y_test, self.log_reg_preds))
+        print("Precision:", precision_score(self.y_test, self.log_reg_preds))
+        print("Recall:", recall_score(self.y_test, self.log_reg_preds))
+        print("F1 Score:", f1_score(self.y_test, self.log_reg_preds))
+        print("ROC-AUC:", roc_auc_score(self.y_test, self.log_reg.predict_proba(self.X_test)[:, 1]))
+
+    def RF_models_evaluate(self):
+        # Random Forest Evaluation
+        print("\nRandom Forest:")
+        print("Accuracy:", accuracy_score(self.y_test, self.rf_preds))
+        print("Precision:", precision_score(self.y_test, self.rf_preds))
+        print("Recall:", recall_score(self.y_test, self.rf_preds))
+        print("F1 Score:", f1_score(self.y_test, self.rf_preds))
+        print("ROC-AUC:", roc_auc_score(self.y_test, self.rf.predict_proba(self.X_test)[:, 1]))
+
+    def XGB_models_evaluate(self):
+        # XGB Boosting Evaluation
+        print("\nXGB Boosting:")
+        print("Accuracy:", accuracy_score(self.y_test, self.XGB_preds))
+        print("Precision:", precision_score(self.y_test, self.XGB_preds))
+        print("Recall:", recall_score(self.y_test, self.XGB_preds))
+        print("F1 Score:", f1_score(self.y_test, self.XGB_preds))
+        print("ROC-AUC:", roc_auc_score(self.y_test, self.XGB.predict_proba(self.X_test)[:, 1]))
+
+    '''
+    def evaluate_models(self):
+        # Logistic Regression Predictions
+        log_reg_preds = self.log_reg.predict(self.X_test)
+
+        # Random Forest Predictions
+        rf_preds = self.rf.predict(self.X_test)
+
+        self.XGB_preds = self.XGB.predict(self.X_test)
+
+        # Random Forest Predictions
+        #rf_preds_g = self.best_rf.predict(self.X_test)
+
+        # Random Forest Predictions
+        #rf_preds_r = self.best_rf_r.predict(self.X_test)
+
+             
+
+        
+        # Grid Search Random Forest Evaluation
+        print("\nRandom Forest:")
+        print("Accuracy:", accuracy_score(self.y_test, rf_preds_g))
+        print("Precision:", precision_score(self.y_test, rf_preds_g))
+        print("Recall:", recall_score(self.y_test, rf_preds_g))
+        print("F1 Score:", f1_score(self.y_test, rf_preds_g))
+        print("ROC-AUC:", roc_auc_score(self.y_test, self.best_rf.predict_proba(self.X_test)[:, 1]))
+
+        # Random Search Random Forest Evaluation
+        print("\nRandom Forest:")
+        print("Accuracy:", accuracy_score(self.y_test, rf_preds_r))
+        print("Precision:", precision_score(self.y_test, rf_preds_r))
+        print("Recall:", recall_score(self.y_test, rf_preds_r))
+        print("F1 Score:", f1_score(self.y_test, rf_preds_r))
+        print("ROC-AUC:", roc_auc_score(self.y_test, self.best_rf_r.predict_proba(self.X_test)[:, 1])) 
+
+        
+        return log_reg_preds, rf_preds, rf_preds_g, rf_preds_r  
+        '''
