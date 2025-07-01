@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/Specter/Documents/Tenx_Academy/Week-5/credit-risk-model/notebooks/mlruns/0/913c4521c03840a293fda0b2e6f7fa64/artifacts
+end_time: 1751369391211
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 913c4521c03840a293fda0b2e6f7fa64
+run_name: RandomForest-Tuned
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751369378684
+status: 3
+tags: []
+user_id: Specter

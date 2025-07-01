@@ -10,6 +10,10 @@ from imblearn.over_sampling import SMOTE  # <- NEW
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+import mlflow
+import mlflow.sklearn
+
 
 
 class RiskPrediction:
@@ -94,39 +98,56 @@ class RiskPrediction:
         print("F1 Score:", f1_score(self.y_test, self.XGB_preds))
         print("ROC-AUC:", roc_auc_score(self.y_test, self.XGB.predict_proba(self.X_test)[:, 1]))
 
+    def tune_random_forest(self):
+        param_dist = {
+            'n_estimators': [100, 200, 300],
+            'max_depth': [None, 10, 20, 30],
+            'min_samples_split': [2, 5, 10],
+            'min_samples_leaf': [1, 2, 4],
+            'bootstrap': [True, False]
+        }
 
-    '''
-    def evaluate_models(self):
-        # Logistic Regression Predictions
-        log_reg_preds = self.log_reg.predict(self.X_test)
+        random_search = RandomizedSearchCV(RandomForestClassifier(random_state=42),
+                                        param_distributions=param_dist,
+                                        n_iter=10,
+                                        scoring='f1',
+                                        cv=5,
+                                        verbose=1,
+                                        n_jobs=-1,
+                                        random_state=42)
+        random_search.fit(self.X_train, self.y_train)
+        self.rf_r = random_search.best_estimator_
+        print("Best Random Forest Params:", random_search.best_params_)
 
-        # Random Forest Predictions
-        rf_preds = self.rf.predict(self.X_test)
-
-        self.XGB_preds = self.XGB.predict(self.X_test)
-
-        # Random Forest Predictions
-        #rf_preds_g = self.best_rf.predict(self.X_test)
-
-        # Random Forest Predictions
-        #rf_preds_r = self.best_rf_r.predict(self.X_test)
+    def evaluate_tuned_random_forest(self):
+        if not hasattr(self, 'rf_r'):
+            raise ValueError("Random Forest model has not been tuned yet. Run tune_random_forest() first.")
         
-        # Grid Search Random Forest Evaluation
-        print("\nRandom Forest:")
-        print("Accuracy:", accuracy_score(self.y_test, rf_preds_g))
-        print("Precision:", precision_score(self.y_test, rf_preds_g))
-        print("Recall:", recall_score(self.y_test, rf_preds_g))
-        print("F1 Score:", f1_score(self.y_test, rf_preds_g))
-        print("ROC-AUC:", roc_auc_score(self.y_test, self.best_rf.predict_proba(self.X_test)[:, 1]))
+        # Train the best model (already trained during RandomizedSearchCV)
+        self.rf_r_preds = self.rf_r.predict(self.X_test)
 
-        # Random Search Random Forest Evaluation
-        print("\nRandom Forest:")
-        print("Accuracy:", accuracy_score(self.y_test, rf_preds_r))
-        print("Precision:", precision_score(self.y_test, rf_preds_r))
-        print("Recall:", recall_score(self.y_test, rf_preds_r))
-        print("F1 Score:", f1_score(self.y_test, rf_preds_r))
-        print("ROC-AUC:", roc_auc_score(self.y_test, self.best_rf_r.predict_proba(self.X_test)[:, 1])) 
+        print("\n✅ Tuned Random Forest:")
+        print("Accuracy:", accuracy_score(self.y_test, self.rf_r_preds))
+        print("Precision:", precision_score(self.y_test, self.rf_r_preds))
+        print("Recall:", recall_score(self.y_test, self.rf_r_preds))
+        print("F1 Score:", f1_score(self.y_test, self.rf_r_preds))
+        print("ROC-AUC:", roc_auc_score(self.y_test, self.rf_r.predict_proba(self.X_test)[:, 1]))
 
-        
-        return log_reg_preds, rf_preds, rf_preds_g, rf_preds_r  
-        '''
+   
+    def log_and_register_model(self, model, model_name: str, run_name: str):
+        with mlflow.start_run(run_name=run_name):
+            mlflow.sklearn.log_model(model, model_name)
+            mlflow.log_params(model.get_params())
+            
+            preds = model.predict(self.X_test)
+            mlflow.log_metric("accuracy", accuracy_score(self.y_test, preds))
+            mlflow.log_metric("precision", precision_score(self.y_test, preds))
+            mlflow.log_metric("recall", recall_score(self.y_test, preds))
+            mlflow.log_metric("f1_score", f1_score(self.y_test, preds))
+            mlflow.log_metric("roc_auc", roc_auc_score(self.y_test, model.predict_proba(self.X_test)[:, 1]))
+
+            # Register the model to the model registry
+            mlflow.sklearn.log_model(model, artifact_path=model_name, registered_model_name=model_name)
+            print(f"{model_name} registered to MLflow Model Registry.")
+
+   
