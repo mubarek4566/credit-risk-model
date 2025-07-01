@@ -1,0 +1,10 @@
+artifact_location: file:///c:/Users/Specter/Documents/Tenx_Academy/Week-5/credit-risk-model/notebooks/mlruns/0/models/m-e69cf19623de4833b1ec8c765aff3e0c/artifacts
+creation_timestamp: 1751369387871
+experiment_id: '0'
+last_updated_timestamp: 1751369391147
+model_id: m-e69cf19623de4833b1ec8c765aff3e0c
+model_type: null
+name: credit_rf_model
+source_run_id: 913c4521c03840a293fda0b2e6f7fa64
+status: 2
+status_message: null
