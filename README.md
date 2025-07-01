@@ -24,3 +24,24 @@ In a regulated financial environment, there is a critical trade-off between usin
 | `unique_product_count` | Unique number of products per customer               |
 | `unique_channel_count` | Unique number of channels used per customer          |
 | `fraud_ratio`          | % of transactions that were fraud per customer       |
+
+
+## 🚀 Deployment
+This project exposes a RESTful API for credit risk prediction using FastAPI. The trained model is tracked and loaded from the MLflow Model Registry.
+
+### 💡 How It Works
+The trained model is saved and registered in MLflow during model training.
+
+The API loads the model from the MLflow registry using mlflow.sklearn.load_model().
+
+New customer data can be sent to the /predict endpoint to receive a probability score and a risk classification (is_high_risk).
+
+### 📦 Running the API Locally
+Install dependencies (including FastAPI, Uvicorn, MLflow, and Pydantic):
+    pip install -r requirements.txt
+
+Start the API server:
+    uvicorn src.api.main:app --reload
+
+Visit the docs:
+    Open http://127.0.0.1:8000/docs to interact with the API using Swagger UI.
