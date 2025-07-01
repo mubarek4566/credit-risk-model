@@ -6,3 +6,11 @@ pytest
 matplotlib
 seaborn
 missingno
+fastapi
+uvicorn
+mlflow
+pydantic
+scikit-learn
+joblib
+pandas
+flake8  # for linting
